@@ -60,6 +60,7 @@ public:
         position.x += direction.x * delta;
         position.y += direction.y * delta;
         
+        Update();
     }
 
     void Update()

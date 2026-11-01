@@ -17,10 +17,9 @@ public:
 
     DialogSystem(Texture2D _textureB)
     {
-        // lines = newLines;
-        // currentLine = 0;
-        // isActive = true;
         textureBox = _textureB;
+        currentLine = 0;
+        isActive = false;
     }
 
     void StartDialog(std::vector<std::string> newLines)

@@ -21,10 +21,10 @@ public:
         Vector2 input = {0.0f, 0.0f};
 
         // 1. Gather Input (Independent 'if' statements allow diagonal movement!)
-        if (IsKeyDown(KEY_W)) input.y -= 1.0f;
-        if (IsKeyDown(KEY_S)) input.y += 1.0f;
-        if (IsKeyDown(KEY_A)) input.x -= 1.0f;
-        if (IsKeyDown(KEY_D)) input.x += 1.0f;
+        if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) input.y -= 1.0f;
+        if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) input.y += 1.0f;
+        if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) input.x -= 1.0f;
+        if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) input.x += 1.0f;
 
         // Normalize input so moving diagonally isn't faster than moving straight
         if (Vector2Length(input) > 0.0f) {
