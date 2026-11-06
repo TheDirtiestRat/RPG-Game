@@ -115,25 +115,25 @@ public:
             }
         }
 
-        
-
         // Get the current frame's row and column
         int row = activeFrames[animationIndex].first;
         int column = activeFrames[animationIndex].second;
 
-        // Set the sprite direction
+        // Select the correct column
+        sourceRec.x = column * frameWidth;
+
+        // Select the correct row
+        sourceRec.y = row * frameHeight;
+
+        // Flip horizontally when facing LEFT
         if (facing == LEFT)
         {
             sourceRec.width = -frameWidth;
-            sourceRec.x = (column + 1) * frameWidth;
         }
         else
         {
             sourceRec.width = frameWidth;
-            sourceRec.x = column * frameWidth;
         }
-
-        sourceRec.y = row * frameHeight;    
 
         return animationFinished;
     }
@@ -154,7 +154,7 @@ public:
     void Draw()
     {
         // for debuging
-        //  DrawRectangleRec(areaCollision, GREEN);
+        // DrawRectangleRec(areaCollision, GREEN);
         // draw the art
         DrawTextureRec(texture, sourceRec, position, WHITE);
     }

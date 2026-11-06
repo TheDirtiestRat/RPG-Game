@@ -4,7 +4,9 @@
 #include <raymath.h>
 #include <vector>
 #include <utility>
+#include <algorithm>
 #include "entity.hpp"
+#include "projectile.hpp"
 
 class PlayerController
 {
@@ -16,46 +18,54 @@ public:
     float acceleration = 25.0f;
     float friction = 15.0f;
 
+    Texture2D projectileTex;
+    std::vector<Projectile> &projectiles;
+
     // Animation frames: {row, column}
 
     std::vector<std::pair<int, int>> idleDown = {
         {1, 0}};
-
     std::vector<std::pair<int, int>> idleUp = {
         {1, 2}};
-
-
     std::vector<std::pair<int, int>> idleRight = {
         {1, 1}};
 
     std::vector<std::pair<int, int>> walkDown = {
-        {0, 0}, {1, 0}, {2, 0},{3,0}};
-
+        {0, 0}, {1, 0}, {2, 0}, {3, 0}};
     std::vector<std::pair<int, int>> walkUp = {
-        {0, 2}, {1, 2}, {2, 2},{3,2}};
-
-
+        {0, 2}, {1, 2}, {2, 2}, {3, 2}};
     std::vector<std::pair<int, int>> walkRight = {
-        {0, 1}, {1, 1}, {2, 1},{3,1}};
+        {0, 1}, {1, 1}, {2, 1}, {3, 1}};
 
     // Replace these example frames with your actual attack frames.
     std::vector<std::pair<int, int>> attackDown = {
-        {0, 3}, {1, 3}, {0, 3}};
-
+        {1, 3}, {1, 3}, {0, 3},{0, 3}};
     std::vector<std::pair<int, int>> attackUp = {
-        {0, 5}, {1, 5}, {0, 5}};
-
+        {1, 5}, {1, 5},{0, 5},{0, 5}};
     std::vector<std::pair<int, int>> attackRight = {
-        {0, 4}, {1, 4}, {0, 4}};
+        {1, 4}, {1, 4},{0, 4},{0, 4}};
 
-    PlayerController(Entity &entity) : player(entity)
+    PlayerController(Entity &entity, std::vector<Projectile> &projec) : player(entity), projectiles(projec)
     {
         direction = {0.0f, 0.0f};
     }
 
+    void ThrowAxe()
+    {
+        Vector2 spawnPosition = {
+            player.position.x,
+            player.position.y};
+
+        projectiles.emplace_back(
+            projectileTex,
+            spawnPosition,
+            player.facing);
+    }
+   
+
     void Update(float delta)
     {
-
+        
         // 1. ATTACKING STATE
         if (player.currentState == ATTACKING)
         {
@@ -93,10 +103,11 @@ public:
         }
 
         // 2. CHECK ATTACK INPUT
-        if (IsKeyPressed(KEY_SPACE))
+        if (IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_ENTER))
         {
             player.currentState = ATTACKING;
             direction = {0.0f, 0.0f};
+            ThrowAxe();
             return;
         }
 
