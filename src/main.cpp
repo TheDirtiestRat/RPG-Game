@@ -3,7 +3,7 @@
 
 int main()
 {
-    InitWindow(800, 800, "Conque the Castle");
+    InitWindow(800, 600, "Conque the Castle");
     SetTargetFPS(60);
 
     Font myFont = LoadFont("src/fonts/Ac437_IBM_BIOS.ttf");
