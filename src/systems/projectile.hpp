@@ -2,76 +2,28 @@
 #pragma once
 
 #include <raylib.h>
+#include <vector>
+#include <src/systems/entity.hpp>
 
-class Projectile
+class ProjectileSystem
 {
 public:
-    Texture2D texture;
-    Rectangle sourceRec;
-
-    Vector2 position;
-    Vector2 direction;
-
-    float size;
-    float speed;
-
-    bool active;
-    bool debug;
-
-    Projectile(
-        Texture2D _texture,
-        Vector2 _position,
-        Vector2 _direction,
-        float _speed = 400.0f,
-        float _size = 80.0f,
-        bool _isDebug = false)
+    static void Update(std::vector<Entity> &entities)
     {
-        texture = _texture;
-        sourceRec = {0, 0, _size, _size};
-        speed = _speed;
-        size = _size;
-
-        active = true;
-        debug = _isDebug;
-
-        direction = _direction;
-        position = _position;
-    }
-
-    void Update(float delta)
-    {
-        if (!active)
-            return;
-
-        // Move projectile
-        position.x += direction.x * speed * delta;
-        position.y += direction.y * speed * delta;
-
-        // Remove when outside screen
-        if (position.x < -size ||
-            position.x > GetScreenWidth() + size ||
-            position.y < -size ||
-            position.y > GetScreenHeight() + size)
+        for (Entity &entity : entities)
         {
-            active = false;
+            if (!entity.active || !entity.projectile.enabled)
+            {
+                continue;
+            }
+
+            const Vector2 position = entity.transform.position;
+            const Vector2 size = entity.transform.size;
+            if (position.x + size.x < 0.0f || position.x > GetScreenWidth() ||
+                position.y + size.y < 0.0f || position.y > GetScreenHeight())
+            {
+                entity.active = false;
+            }
         }
-    }
-
-    void Draw()
-    {
-        if (!active)
-            return;
-        
-        if (debug) {
-            DrawRectangle(position.x, position.y, sourceRec.width, sourceRec.height, RED);
-        }
-
-        DrawTextureRec(texture, sourceRec, position, WHITE);
-    }
-
-    Rectangle GetCollisionRect()
-    {
-        return {
-            position.x, position.y, sourceRec.width, sourceRec.height};
     }
 };

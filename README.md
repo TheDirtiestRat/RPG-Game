@@ -1,89 +1,20 @@
-# Raylib-CPP Starter Template for VS Code
+# RPG Game Sample Project
 
-![Language](https://img.shields.io/badge/language-C%2B%2B-brightgreen)
-![Raylib](https://img.shields.io/badge/raylib-6.0-00d4aa)
-![Platform](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-blue)
-![Editor](https://img.shields.io/badge/editor-VS%20Code-007ACC)
+A small top-down C++ game built with raylib. The test scene demonstrates a player, a pursuing boss, health, collision, and throwable projectiles.
 
-A minimal C++ project scaffold for Visual Studio Code on Windows — includes a bouncing ball demo and zero boilerplate friction.
+## Build and run
 
-<p align="center">
-  <a href="https://youtu.be/acvgbKRaxDI">
-    <img src="preview.jpg" alt="Preview of the bouncing ball demo — click to watch tutorial" width="800">
-  </a>
-</p>
+Open `main.code-workspace` in VS Code and press **F5**. The Windows build task expects raylib and w64devkit under `C:/raylib`, as configured in `.vscode/tasks.json`. Alternatively, run:
 
-<p align="center">
-  <a href="https://youtu.be/acvgbKRaxDI">
-    <img src="https://img.shields.io/badge/▶%20Watch%20the%20Video%20Tutorial-FF0000?style=for-the-badge&logo=youtube&logoColor=white" alt="Watch the Video Tutorial on YouTube">
-  </a>
-</p>
-
----
-
-## Get started in 3 steps
-
-**1.** Double-click `main.code-workspace` to open the project in VS Code.
-
-**2.** In the Explorer panel, navigate to the `src/` folder and open `main.cpp`.
-
-**3.** Press `F5` to compile and run.
-
----
-
-## What's inside
-
-| | Feature | Details |
-|---|---|---|
-| 📁 | **Clean folder structure** | All source code lives in `src/` for clear organisation |
-| 🎱 | **Bouncing ball demo** | Ready-to-run example using raylib's core 2D drawing API |
-| ⚙️ | **VS Code tasks** | Pre-configured build tasks — no manual setup required |
-| ✅ | **Tested on Win 10/11** | Works with raylib 6.0 on both platforms out of the box |
-
----
-
-## Quick look
-
-```cpp
-#include <raylib.h>
-#include "ball.h"
-
-int main()
-{
-    const Color darkGreen = {20, 160, 133, 255};
-
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 600;
-
-    Ball ball;
-
-    InitWindow(screenWidth, screenHeight, "My first RAYLIB program!");
-    SetTargetFPS(60);
-
-    while (!WindowShouldClose())
-    {
-        ball.Update();
-
-        BeginDrawing();
-            ClearBackground(darkGreen);
-            ball.Draw();
-        EndDrawing();
-    }
-
-    CloseWindow();
-}
+```powershell
+mingw32-make.exe RAYLIB_PATH=C:/raylib/raylib PROJECT_NAME=game "OBJS=src/*.cpp" BUILD_MODE=DEBUG
 ```
 
----
+## Controls
 
-## What's changed
+- Move with **WASD** or the **arrow keys**.
+- Throw in the last movement direction with **Z** or **Enter**.
 
-The template now uses folders for better organisation. All source code lives in the `src/` folder.
+## Entity architecture
 
----
-
-## Resources
-
-🎥 [Video Tutorial on YouTube](https://youtu.be/acvgbKRaxDI)
-&nbsp;&nbsp;|&nbsp;&nbsp;
-📺 [My YouTube Channel](https://www.youtube.com/channel/UC3ivOTE5EgpmF2DHLBmWIWg)
+Entities are assembled from plain components in `src/systems/components.hpp`. The scene creates the player, boss, and projectiles through `entity_factory.hpp`, then delegates input, movement, collision, projectile cleanup, and rendering to small systems. Components are stored directly on each entity, keeping the design suitable for this small game without adding an ECS dependency.

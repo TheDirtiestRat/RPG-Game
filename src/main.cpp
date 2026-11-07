@@ -1,24 +1,24 @@
 #include <raylib.h>
-#include <game.hpp>
+#include <src/game.hpp>
 
 int main()
 {
     InitWindow(800, 600, "Conque the Castle");
     SetTargetFPS(60);
 
-    Font myFont = LoadFont("src/fonts/Ac437_IBM_BIOS.ttf");
-    Texture2D ratText = LoadTexture("src/images/DRATS.png");
-    Texture2D axeTexture = LoadTexture("src/images/AXE.png");
-    Texture2D catText = LoadTexture("src/images/Cat RPG.png");
-    Texture2D dialogBoxTex = LoadTexture("src/images/DialogBox RPG.png");
-
     Game game;
+    if (!game.Load())
+    {
+        game.Unload();
+        CloseWindow();
+        return 1;
+    }
 
     while (!WindowShouldClose())
     {
         float dt = GetFrameTime();
 
-        game.Update();
+        game.Update(dt);
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
@@ -28,12 +28,7 @@ int main()
         EndDrawing();
     }
 
-    UnloadFont(myFont);
-    UnloadTexture(ratText);
-    UnloadTexture(catText);
-    UnloadTexture(dialogBoxTex);
-    UnloadTexture(axeTexture);
-
+    game.Unload();
     CloseWindow();
     return 0;
 }

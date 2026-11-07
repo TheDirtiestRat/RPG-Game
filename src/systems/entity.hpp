@@ -1,37 +1,28 @@
 #pragma once
 
 #include <raylib.h>
+#include <src/systems/components.hpp>
+#include <src/systems/health.hpp>
 
 class Entity
 {
-private:
-    Vector2 position;
-    Texture2D texture;
-    Rectangle sourceRec;
-
-    bool isDebug = false;
 public:
-    Entity(Texture2D _texture, bool _debug = false) {
-        isDebug = _debug;
-        texture = _texture;
-        sourceRec = {0,0,texture.width,texture.height};
-    };
-    ~Entity();
+    unsigned int id = 0;
+    Faction faction = Faction::Neutral;
+    bool active = true;
 
-    void UpdatePosition(Vector2 _dir, float delta) {
-        position.x += _dir.x * delta;
-        position.y += _dir.y * delta; 
-    }
+    TransformComponent transform;
+    RenderComponent render;
+    MovementComponent movement;
+    PlayerControlComponent playerControl;
+    BossControlComponent bossControl;
+    CollisionComponent collision;
+    HealthComponent health;
+    ProjectileComponent projectile;
 
-    void Draw() {
-        if (isDebug) {
-            DrawRectangleRec(sourceRec, GREEN);
-        }
-
-        DrawTextureRec(texture, sourceRec, position, WHITE);
+    Rectangle GetBounds() const
+    {
+        const Vector2 boundsSize = collision.enabled ? collision.size : transform.size;
+        return {transform.position.x, transform.position.y, boundsSize.x, boundsSize.y};
     }
 };
-
-Entity::~Entity()
-{
-}

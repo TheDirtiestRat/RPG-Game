@@ -1,30 +1,77 @@
 #pragma once
 
 #include <raylib.h>
+#include <algorithm>
+#include <vector>
+#include <src/systems/entity.hpp>
 
-class Collision{
-    private:
-    bool collided = false;
-    Rectangle area_collision;
-    Rectangle target_collision;
+class CollisionSystem
+{
+public:
+    static void Update(std::vector<Entity> &entities, float delta)
+    {
+        for (Entity &entity : entities)
+        {
+            if (entity.bossControl.enabled)
+            {
+                entity.bossControl.contactCooldown =
+                    std::max(0.0f, entity.bossControl.contactCooldown - delta);
+            }
+        }
 
-    public:
-    Collision(Rectangle _area, Rectangle _target) {
-        area_collision = _area;
-        target_collision = _target;
-    }
-    ~Collision() {
+        for (Entity &projectile : entities)
+        {
+            if (!projectile.active || !projectile.projectile.enabled || !projectile.collision.enabled)
+            {
+                continue;
+            }
 
-    }
+            for (Entity &target : entities)
+            {
+                if (!target.active || !target.collision.enabled ||
+                    target.faction != projectile.projectile.targetFaction ||
+                    target.health.Maximum() == 0)
+                {
+                    continue;
+                }
 
-    void UpdatePosition(Vector2 _pos) {
-        area_collision.x = _pos.x;
-        area_collision.y = _pos.y;
+                if (CheckCollisionRecs(projectile.GetBounds(), target.GetBounds()))
+                {
+                    target.health.TakeDamage(projectile.projectile.damage);
+                    projectile.active = false;
+                    break;
+                }
+            }
+        }
 
-        collided = CheckCollisionRecs(area_collision, target_collision);
-    }
+        Entity *player = nullptr;
+        for (Entity &entity : entities)
+        {
+            if (entity.active && entity.faction == Faction::Player && entity.collision.enabled)
+            {
+                player = &entity;
+                break;
+            }
+        }
 
-    void DrawArea() {
-        DrawRectangleRec(area_collision, GREEN);
+        if (player == nullptr)
+        {
+            return;
+        }
+
+        for (Entity &boss : entities)
+        {
+            if (!boss.active || !boss.bossControl.enabled || !boss.collision.enabled ||
+                boss.bossControl.contactCooldown > 0.0f)
+            {
+                continue;
+            }
+
+            if (CheckCollisionRecs(player->GetBounds(), boss.GetBounds()))
+            {
+                player->health.TakeDamage(boss.bossControl.contactDamage);
+                boss.bossControl.contactCooldown = boss.bossControl.contactInterval;
+            }
+        }
     }
 };

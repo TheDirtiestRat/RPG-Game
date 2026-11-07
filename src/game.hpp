@@ -1,29 +1,30 @@
 #pragma once
 
-#include <raylib.h>
+#include <src/scenes/test_scene.hpp>
 
 class Game
 {
 private:
-    // things here
+    TestScene testScene;
 
 public:
-    Game();
-    ~Game();
-
-    void Update()
+    bool Load()
     {
+        return testScene.Load();
+    }
+
+    void Unload()
+    {
+        testScene.Unload();
+    }
+
+    void Update(float _delta)
+    {
+        testScene.Update(_delta);
     }
 
     void Draw()
     {
+        testScene.Draw();
     }
 };
-
-Game::Game()
-{
-}
-
-Game::~Game()
-{
-}

@@ -1,38 +1,47 @@
-#include <raylib.h>
+#pragma once
 
-class Health{
-    private:
-    int current_health = 0;
-    int max_health = 100;
+#include <algorithm>
 
-    bool isDead = false;
-    
-    public:
-    Health(int max_hp) {
-        max_health = max_hp;
-        current_health = max_health; 
-    }
-    ~Health() {
+class HealthComponent
+{
+private:
+    int currentHealth = 0;
+    int maxHealth = 0;
 
+public:
+    explicit HealthComponent(int maximum = 0)
+        : currentHealth(std::max(0, maximum)), maxHealth(std::max(0, maximum))
+    {
     }
 
-    void CheckHealth() {
-        if (current_health < 0) {
-            isDead = true;
+    void TakeDamage(int points)
+    {
+        if (points > 0)
+        {
+            currentHealth = std::max(0, currentHealth - points);
         }
     }
 
-    void UpdateHealth(int points, bool toAdd = false) {
-        if(current_health > max_health) {
-            return;
+    void Heal(int points)
+    {
+        if (points > 0)
+        {
+            currentHealth = points >= maxHealth - currentHealth ? maxHealth : currentHealth + points;
         }
+    }
 
-        if(toAdd) {
-            current_health += points;
-        }else {
-            current_health -= points;
-        }
+    bool IsDead() const
+    {
+        return currentHealth == 0;
+    }
 
-        CheckHealth();
+    int Current() const
+    {
+        return currentHealth;
+    }
+
+    int Maximum() const
+    {
+        return maxHealth;
     }
 };
